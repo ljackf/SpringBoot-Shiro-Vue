@@ -16,7 +16,7 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="昵称" prop="nickname" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" label="用户名" prop="username" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" label="用户名" prop="mobile" style="width: 60px;"></el-table-column>
       <el-table-column align="center" label="角色" width="100">
         <template slot-scope="scope">
           <el-tag type="success" v-text="scope.row.roleName" v-if="scope.row.roleId===1"></el-tag>
@@ -47,7 +47,7 @@
       <el-form class="small-space" :model="tempUser" label-position="left" label-width="80px"
                style='width: 300px; margin-left:50px;'>
         <el-form-item label="用户名" required v-if="dialogStatus=='create'">
-          <el-input type="text" v-model="tempUser.username">
+          <el-input type="text" v-model="tempUser.mobile">
           </el-input>
         </el-form-item>
         <el-form-item label="密码" v-if="dialogStatus=='create'" required>
@@ -102,7 +102,7 @@
           create: '新建用户'
         },
         tempUser: {
-          username: '',
+          mobile: '',
           password: '',
           nickname: '',
           roleId: '',
@@ -164,7 +164,7 @@
       },
       showCreate() {
         //显示新增对话框
-        this.tempUser.username = "";
+        this.tempUser.mobile = "";
         this.tempUser.password = "";
         this.tempUser.nickname = "";
         this.tempUser.roleId = "";
@@ -174,7 +174,7 @@
       },
       showUpdate($index) {
         let user = this.list[$index];
-        this.tempUser.username = user.username;
+        this.tempUser.mobile = user.mobile;
         this.tempUser.nickname = user.nickname;
         this.tempUser.roleId = user.roleId;
         this.tempUser.userId = user.userId;

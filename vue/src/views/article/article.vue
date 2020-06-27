@@ -15,7 +15,7 @@
           <span v-text="getIndex(scope.$index)"> </span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="content" label="文章" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="content" label="房源" style="width: 60px;"></el-table-column>
       <el-table-column align="center" label="创建时间" width="170">
         <template slot-scope="scope">
           <span>{{scope.row.createTime}}</span>
@@ -39,7 +39,7 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form class="small-space" :model="tempArticle" label-position="left" label-width="60px"
                style='width: 300px; margin-left:50px;'>
-        <el-form-item label="文章">
+        <el-form-item label="房源">
           <el-input type="text" v-model="tempArticle.content">
           </el-input>
         </el-form-item>
@@ -68,7 +68,7 @@
         dialogFormVisible: false,
         textMap: {
           update: '编辑',
-          create: '创建文章'
+          create: '创建房源'
         },
         tempArticle: {
           id: "",
@@ -124,7 +124,7 @@
         this.dialogFormVisible = true
       },
       createArticle() {
-        //保存新文章
+        //保存新房源
         this.api({
           url: "/article/addArticle",
           method: "post",
@@ -135,7 +135,7 @@
         })
       },
       updateArticle() {
-        //修改文章
+        //修改房源
         this.api({
           url: "/article/updateArticle",
           method: "post",
