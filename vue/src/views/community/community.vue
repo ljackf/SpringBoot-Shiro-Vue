@@ -89,6 +89,25 @@
           <el-input type="number" v-model="tempCommunity.secondHandPrice">
           </el-input>
         </el-form-item>
+        <el-form-item label="地址">
+          <el-cascader
+            size="large"
+            :options="options"
+            v-model="tempCommunity.selectedOptions"
+            @change="handleChange">
+          </el-cascader>
+        </el-form-item>
+        <el-input v-model="tempCommunity.address" autocomplete="off" id="suggestId" name="address_detail">请输入详细街道地址</el-input>
+        <div class="getAddress" @click="getAddressInfo()">获取位置信息</div>
+        <el-form-item label="获取定位">
+          <div>
+            <div id="allmap"></div>
+            <div>
+              经度<el-input  v-model="tempCommunity.longitude" disabled></el-input>
+              纬度<el-input  v-model="tempCommunity.latitude" disabled></el-input>
+            </div>
+          </div>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -100,7 +119,11 @@
 </template>
 
 <script>
+  import {provinceAndCityData,regionData,provinceAndCityDataPlus,regionDataPlus,CodeToText,TextToCode} from 'element-china-area-data'
   export default {
+    mounted() {
+      this.tencentMap()//调用腾讯地图
+    },
     data() {
       return {
         totalCount: 0, //分页组件--数据总条数
@@ -117,16 +140,16 @@
           update: '编辑',
           create: '创建社区'
         },
-        ages:[
-          {"name":'90年代之前',"value":"BEFORE90"},
-          {"name":'90年代',"value":"F90T00"},
-          {"name":'00年代',"value":"F00T10"},
-          {"name":'10年代',"value":"F10T20"},
-          {"name":'20年代之后',"value":"AFTER20"},
+        ages: [
+          {"name": '90年代之前', "value": "BEFORE90"},
+          {"name": '90年代', "value": "F90T00"},
+          {"name": '00年代', "value": "F00T10"},
+          {"name": '10年代', "value": "F10T20"},
+          {"name": '20年代之后', "value": "AFTER20"},
         ],
-        architectureTypes:[
-          {"name":'塔楼',"value":"TOWER"},
-          {"name":'板楼',"value":"SLAB"}
+        architectureTypes: [
+          {"name": '塔楼', "value": "TOWER"},
+          {"name": '板楼', "value": "SLAB"}
         ],
         tempCommunity: {
           id: "",
@@ -139,8 +162,13 @@
           serviceCompany: "",
           serviceFee: "",
           developCompany: "",
-          secondHandPrice: ""
-        }
+          secondHandPrice: "",
+          selectedOptions: [],
+          longitude:"",
+          latitude:""
+        },
+        options: regionData
+
       }
     },
     created() {
@@ -210,7 +238,49 @@
           this.dialogFormVisible = false
         })
       },
-    }
+      tencentMap: function () {
+        var center = new qq.maps.LatLng(this.longitude, this.latitude);
+        var map = new qq.maps.Map(
+          document.getElementById('allmap'), {
+            center: center,
+            zoom: 13,
+            draggable: true,
+            scrollwheel: true,
+            disableDoubleClickZoom: false
+          })
+        //创建一个Marker
+        var marker = new qq.maps.Marker({
+        //设置Marker的位置坐标
+          position: center,
+        //设置显示Marker的地图
+          map: map
+        });
+      },
+      getAddressInfo(){
+        this.api({
+          method:'get',
+          url:'https://bird.ioliu.cn/v1/?url=' +"https://apis.map.qq.com/ws/geocoder/v1/?address="+this.selectedOptions+this.address+"&key=6NSBZ-I7LKU-ZJ7VV-4BA2C-C3VE5-ASBGZ",
+          dataType:'JSONP',
+        }).then((res)=>{
+          if(res.data.status==0){
+            this.longitude=res.data.result.location.lat;
+            this.latitude=res.data.result.location.lng;
+            this.tencentMap();//更新地图信息
+          }else{
+            this.longitude=0;
+            this.latitude=0;
+          }
+        })
+        return false;
+      },
+      handleChange(value) {
+        this.address=this.getCityCode(value);
+      },
+      getCityCode:function(value){
+        return CodeToText[value[0]]+CodeToText[value[1]]+CodeToText[value[2]]
+      },
+    },
+
   }
 </script>
 
