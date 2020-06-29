@@ -42,6 +42,10 @@ public class ShiroConfiguration {
          /* 过滤链定义，从上向下顺序执行，一般将 / ** 放在最为下边:这是一个坑呢，一不小心代码就不好使了;
           authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问 */
 		filterChainDefinitionMap.put("/", "anon");
+		filterChainDefinitionMap.put("/front/region/**","anon");
+		filterChainDefinitionMap.put("/front/index","anon");
+		filterChainDefinitionMap.put("/front/houseResource/detail","anon");
+		filterChainDefinitionMap.put("/front/houseResource/list","anon");
 		filterChainDefinitionMap.put("/swagger-ui.html", "anon");
 		filterChainDefinitionMap.put("/swagger-resources/**", "anon");
 		filterChainDefinitionMap.put("/v2/api-docs", "anon");
@@ -50,6 +54,8 @@ public class ShiroConfiguration {
 		filterChainDefinitionMap.put("/login/auth", "anon");
 		filterChainDefinitionMap.put("/login/logout", "anon");
 		filterChainDefinitionMap.put("/error", "anon");
+		filterChainDefinitionMap.put("/front/houseResource/cancelCollect/**","authc");
+		filterChainDefinitionMap.put("/front/houseResource/collect/**","authc");
 		filterChainDefinitionMap.put("/**", "authc");
 		shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 		return shiroFilterFactoryBean;

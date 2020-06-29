@@ -4,7 +4,7 @@
 <mapper namespace="com.rrrent.theia.dao.CarouselDao">
 
 <select id="findAll" resultType="com.alibaba.fastjson.JSONObject">
-
+    select img from carouse
 </select>
 
 </mapper>

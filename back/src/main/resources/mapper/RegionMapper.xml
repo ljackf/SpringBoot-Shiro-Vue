@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rrrent.theia.dao.RegionDao">
+
+<select id="provinceCityAll" resultType="com.rrrent.theia.vo.RegionVo">
+    select code,name from region where `code`%100 = 0
+</select>
+
+    <select id="regionStreetAll" resultType="com.rrrent.theia.vo.RegionVo">
+      select code,name from region where `code`> #{regionCode}  and `code` &lt; (#{regionCode}/100+1)*100;
+    </select>
+
+</mapper>

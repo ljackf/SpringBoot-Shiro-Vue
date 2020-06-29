@@ -72,7 +72,7 @@ public class PageBean<T> implements Serializable {
 		this.total = total;
 	}
 
-	public int getTotalPage() {
+	public Integer getTotalPage() {
 		return totalPage;
 	}
 

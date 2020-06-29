@@ -3,8 +3,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.rrrent.theia.dao.BrandResidenceDao">
 
-<select id="findAll" resultType="com.rrrent.theia.vo.BrandResidenceVo">
-
+<select id="findAllByCode" resultType="com.rrrent.theia.vo.BrandResidenceVo">
+    select * from house_resource
 </select>
 
 </mapper>
