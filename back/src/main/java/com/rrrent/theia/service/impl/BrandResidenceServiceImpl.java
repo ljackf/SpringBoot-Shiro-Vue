@@ -1,6 +1,5 @@
 package com.rrrent.theia.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.rrrent.theia.dao.BrandResidenceDao;
 import com.rrrent.theia.service.BrandResidenceService;
 import com.rrrent.theia.vo.BrandResidenceVo;
@@ -22,6 +21,7 @@ public class BrandResidenceServiceImpl implements BrandResidenceService {
 
     @Override
     public List<BrandResidenceVo> findAllByCode(String code) {
-        return brandResidenceDao.findAllByCode(code);
+        List<BrandResidenceVo>brandResidenceVos =  brandResidenceDao.findAllByCode(code);
+        return brandResidenceVos;
     }
 }

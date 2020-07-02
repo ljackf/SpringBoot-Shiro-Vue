@@ -4,7 +4,11 @@
 <mapper namespace="com.rrrent.theia.dao.BrandResidenceDao">
 
 <select id="findAllByCode" resultType="com.rrrent.theia.vo.BrandResidenceVo">
-    select * from house_resource
+    select t.name name,t.value tag,hr.pre_img img from house_resource hr left join tag_house_relation thr on
+    thr.house_id=hr.id left
+    join tags
+    t on
+    t.id=thr.tag_id where t.type = "BRANDAPARTMENT" limit 0,4
 </select>
 
 </mapper>

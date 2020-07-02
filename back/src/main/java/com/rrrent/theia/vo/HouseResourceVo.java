@@ -1,5 +1,6 @@
 package com.rrrent.theia.vo;
 
+import com.alibaba.fastjson.JSON;
 import com.rrrent.theia.util.model.HouseLayout;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -36,8 +37,10 @@ public class HouseResourceVo {
     int bathroom;
     @ApiModelProperty(value = "面积")
     BigDecimal area;
-    @ApiModelProperty(value = "房屋主图")
-    String houseImg;
+    @ApiModelProperty(value = "房屋详情图片")
+    List<String> houseImgs;
     @ApiModelProperty(value = "标签")
-    List<String> tags;
+    List<TagVo> tags;
+    @ApiModelProperty(value = "头图")
+    private String preImg;
 }

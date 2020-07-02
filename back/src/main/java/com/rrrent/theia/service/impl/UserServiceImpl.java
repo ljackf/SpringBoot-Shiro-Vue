@@ -173,4 +173,9 @@ public class UserServiceImpl implements UserService {
 		userDao.removeRoleAllPermission(jsonObject);
 		return CommonUtil.successJson();
 	}
+
+	@Override
+	public JSONObject getbyWxOpenId(String openid) {
+		return userDao.getbyWxOpenId(openid);
+	}
 }

@@ -3,6 +3,34 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.rrrent.theia.dao.HouseResourceDao">
 
+    <select id="findListPage" resultType="com.rrrent.theia.vo.HouseResourceVo">
+        select hr.area,hr.bathroom,hr.house_layout,hr.name,hr.pay_mode payMode,hr.settings,hr.floor_type floorType,
+         hr.house_layout houseLayout,hr.hall,hr.pre_img preImg,hr.room,hr.rent,hr.id
+         from house_resource hr
+    </select>
 
+    <select id="findById" resultType="com.rrrent.theia.dto.HouseResourceDetailDto">
+        select hr.id id, hr.name name, hr.house_layout houseLayout,su.mobile maintainerMobile,su.icon maintainerIcon,su.nickname
+        maintainer,s.name storeName,hr.floor_type floorType,
+        hr.pay_mode payMode,hr.hall hall, hr.room,hr.bathroom,hr.area,hr.selected,hr.update_time updateDate,
+        hr.house_img houseImg,hr.rent,hr.settings,hr.floor_type,hr.settings,hr.floor floor,hr.des des,hr.orientation orientation
+         ,hr.renovation_type renovationType,c.id cId,c.name cName,c.address address,c.architecture_age
+         architectureAge,c.architecture_sum architectureSum
+        ,c.architecture_type architectureType,c.develop_company
+        developCompany,c.house_sum houseSum,c.second_hand_price secondHandPrice,c.service_fee serviceFee,
+        c.service_company serviceCompany,c.latitude,c.longitude
+         from house_resource hr left join sys_user su on su.id=hr.maintainer left join community c on hr.community_id
+          = c.id
+          left join store_user stu on stu.user_id = hr.maintainer left join  store s on s.id =stu.store_id
+          WHERE hr.id = #{id}
+    </select>
 
+    <select id="findCountByUserIdHouseId" resultType="Integer">
+        select count(1) from col_house where house_id = #{id} and user_id = #{userId}
+    </select>
+
+    <select id="findTagsByHouseId" resultType="com.rrrent.theia.vo.TagVo">
+        select t.name,t.value from tag_house_relation thr left join tags t on t.id = thr.tag_id where thr.house_id =
+        #{id} and t.type="GENERAL"
+    </select>
 </mapper>

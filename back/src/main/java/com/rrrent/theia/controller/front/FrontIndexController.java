@@ -44,13 +44,7 @@ public class FrontIndexController {
         List<String> carousels = carouselService.findAll();
         List<BrandResidenceVo> brandResidences = brandResidenceService.findAllByCode(code);
         FrontIndexVo frontIndexVo = new FrontIndexVo();
-        carousels.add("https://cn.bing.com/th?id=OHR.ArganGoats_ZH-CN5346845518_UHD.jpg&rf=LaDigue_UHD.jpg&pid=hp&w=1920&h=1080&rs=1&c=4");
-        carousels.add("https://cn.bing.com/th?id=OHR.FoggyCastle_ZH-CN6799694629_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&pid=hp");
-        BrandResidenceVo brandResidenceVo = new BrandResidenceVo();
-        brandResidenceVo.setName("武汉中建公馆");
-        brandResidenceVo.setImg("https://cn.bing.com/th?id=OHR.FoggyCastle_ZH-CN6799694629_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&pid=hp");
         frontIndexVo.setCarousels(carousels);
-        brandResidences.add(brandResidenceVo);
         frontIndexVo.setBrandResidences(brandResidences);
         return ResponseInfo.success(frontIndexVo);
     }

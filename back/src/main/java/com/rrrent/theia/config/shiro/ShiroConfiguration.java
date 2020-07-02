@@ -1,11 +1,14 @@
 package com.rrrent.theia.config.shiro;
 
+import com.rrrent.theia.config.jwt.JwtFilter;
+import com.rrrent.theia.controller.MiniSessionManager;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +34,7 @@ public class ShiroConfiguration {
 		//Shiro的核心安全接口,这个属性是必须的
 		shiroFilterFactoryBean.setSecurityManager(securityManager);
 		Map<String, Filter> filterMap = new LinkedHashMap<>();
+		filterMap.put("jwt", new JwtFilter());
 		filterMap.put("authc", new AjaxPermissionsAuthorizationFilter());
 		shiroFilterFactoryBean.setFilters(filterMap);
 		/*定义shiro过滤链  Map结构
@@ -41,6 +45,8 @@ public class ShiroConfiguration {
 		Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
          /* 过滤链定义，从上向下顺序执行，一般将 / ** 放在最为下边:这是一个坑呢，一不小心代码就不好使了;
           authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问 */
+		// 所有请求通过JWT Filter
+		filterChainDefinitionMap.put("/front/**", "jwt");
 		filterChainDefinitionMap.put("/", "anon");
 		filterChainDefinitionMap.put("/front/region/**","anon");
 		filterChainDefinitionMap.put("/front/index","anon");
@@ -54,6 +60,8 @@ public class ShiroConfiguration {
 		filterChainDefinitionMap.put("/login/auth", "anon");
 		filterChainDefinitionMap.put("/login/logout", "anon");
 		filterChainDefinitionMap.put("/error", "anon");
+		filterChainDefinitionMap.put("/api/wx/user/login/**", "anon");
+		filterChainDefinitionMap.put("/api/response/**", "anon");
 		filterChainDefinitionMap.put("/front/houseResource/cancelCollect/**","authc");
 		filterChainDefinitionMap.put("/front/houseResource/collect/**","authc");
 		filterChainDefinitionMap.put("/**", "authc");
@@ -65,19 +73,20 @@ public class ShiroConfiguration {
 	 * 不指定名字的话，自动创建一个方法名第一个字母小写的bean
 	 */
 	@Bean
-	public SecurityManager securityManager() {
+	public SecurityManager securityManager(ShiroRealmConfig shiroRealmConfig) {
 		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-		securityManager.setRealm(userRealm());
+		securityManager.setRealms(shiroRealmConfig.allRealm());
+		securityManager.setSessionManager(sessionManager());
 		return securityManager;
 	}
 
-	/**
-	 * Shiro Realm 继承自AuthorizingRealm的自定义Realm,即指定Shiro验证用户登录的类为自定义的
-	 */
 	@Bean
-	public UserRealm userRealm() {
-		UserRealm userRealm = new UserRealm();
-		return userRealm;
+	public DefaultWebSessionManager sessionManager() {
+		//重写DefaultWebSessionManager    @chenkang
+		MiniSessionManager sessionManager = new MiniSessionManager();
+		//DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
+		sessionManager.setSessionIdUrlRewritingEnabled(false);
+		return sessionManager;
 	}
 
 	/**
@@ -98,6 +107,7 @@ public class ShiroConfiguration {
 		hashedCredentialsMatcher.setStoredCredentialsHexEncoded(true);
 		return hashedCredentialsMatcher;
 	}
+
 
 	/**
 	 * Shiro生命周期处理器
@@ -120,9 +130,9 @@ public class ShiroConfiguration {
 	}
 
 	@Bean
-	public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor() {
+	public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
 		AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
-		authorizationAttributeSourceAdvisor.setSecurityManager(securityManager());
+		authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
 		return authorizationAttributeSourceAdvisor;
 	}
 }

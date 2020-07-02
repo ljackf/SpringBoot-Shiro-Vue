@@ -1,6 +1,7 @@
 package com.rrrent.theia.controller.front;
 
 import com.github.pagehelper.Page;
+import com.github.pagehelper.PageInfo;
 import com.rrrent.theia.bo.HouseResourceBo;
 import com.rrrent.theia.bo.PageBo;
 import com.rrrent.theia.service.HouseResourceService;
@@ -31,7 +32,7 @@ public class HouseResourceController {
     @ApiOperation(value = "房源列表")
     @GetMapping(value = "/list")
     public ResponseInfo<PageBean<HouseResourceVo>> list(HouseResourceBo houseResourceBo, PageBo pageBo){
-        Page<HouseResourceVo> houseResourceVoPage = houseResourceService.findListPage(houseResourceBo.getCode(),
+        PageInfo<HouseResourceVo> houseResourceVoPage = houseResourceService.findListPage(houseResourceBo.getCode(),
                 houseResourceBo.getSelected(),
                 houseResourceBo.getRentStart(),
                 houseResourceBo.getRentEnd(),houseResourceBo.getRenovationType(),houseResourceBo.getPayMode(),
@@ -39,7 +40,7 @@ public class HouseResourceController {
                 houseResourceBo.getCommissionType(),houseResourceBo.getHouseTags(),houseResourceBo.getLift(),
                 houseResourceBo.getKey(),pageBo);
         PageBean<HouseResourceVo> pageBean = new PageBean(houseResourceVoPage.getPageNum(),houseResourceVoPage.getPageSize(),
-                houseResourceVoPage.getTotal(),houseResourceVoPage.getResult());
+                houseResourceVoPage.getTotal(),houseResourceVoPage.getList());
         return ResponseInfo.success(pageBean);
     }
 
@@ -66,8 +67,10 @@ public class HouseResourceController {
 
     @ApiOperation(value = "房源收藏列表")
     @GetMapping(value = "/collect/list")
-    public ResponseInfo<List<HouseResourceVo>> collectList(){
+    public ResponseInfo<PageBean<HouseResourceVo>> collectList(PageBo pageBo){
         List<HouseResourceVo> houseResourceVoPage = houseResourceService.findListByUserId();
-        return ResponseInfo.success(houseResourceVoPage);
+        PageBean<HouseResourceVo> pageBean = new PageBean(2,10,
+                10L,houseResourceVoPage);
+        return ResponseInfo.success(pageBean);
     }
 }

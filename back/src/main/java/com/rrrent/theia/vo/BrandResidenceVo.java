@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * @author : jack
  * @date : 2020/6/21
@@ -16,6 +18,8 @@ import lombok.Setter;
 public class BrandResidenceVo {
     @ApiModelProperty(value = "公寓名称")
     String name;
-    @ApiModelProperty(value = "公寓图片")
+    @ApiModelProperty(value = "公寓头图")
     String img;
+    @ApiModelProperty(value = "公寓标签")
+    String tag;
 }

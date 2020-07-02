@@ -36,8 +36,8 @@ public class RegionContoller {
 
     @ApiOperation(value = "区/街道")
     @GetMapping(value = "/region/street")
-    public ResponseInfo<List<RegionVo>> regionStreetAll(@RequestParam("regionCode")Integer regionCode){
-        List<RegionVo> regionVos = regionService.regionStreetAll(regionCode);
+    public ResponseInfo<List<RegionVo>> regionStreetAll(@RequestParam("cityCode")Integer cityCode){
+        List<RegionVo> regionVos = regionService.regionStreetAll(cityCode);
         return ResponseInfo.success(regionVos);
     }
 }

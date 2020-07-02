@@ -1,8 +1,6 @@
 package com.rrrent.theia.vo;
 
-import com.rrrent.theia.util.model.HouseLayout;
-import com.rrrent.theia.util.model.HouseSetting;
-import com.rrrent.theia.util.model.PayMode;
+import com.rrrent.theia.util.model.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -41,9 +39,23 @@ public class HouseResourceDetailVo {
     @ApiModelProperty(value = "房屋主图")
     List<String> houseImgs;
     @ApiModelProperty(value = "标签")
-    List<String> tags;
-    @ApiModelProperty(value = "楼层类型：中楼层、高楼层...")
+    List<TagVo> tags;
+    @ApiModelProperty(value = "楼层类型：LOW低楼层，MEDIUM中楼层、HIGH高楼层...")
     String floorType;
+    @ApiModelProperty(value = "楼层")
+    int floor;
+    @ApiModelProperty("房屋朝向：EAST 东,SOUTH 南,WEST 西,NORTH 北,SOUTHEAST 东南,NORTHEAST 东北, SOUTHWEST 西南,NORTHWEST 西北,NORTHSOUTHPENETRATION 南北通透")
+    Orientation orientation;
+    @ApiModelProperty("装修类型：HAUTECOUTURE 豪装 ,HARDCOVER 精装, MEDIUMDECORATION 中装，PAPERBACK 简装，ROUGHCAST 毛坯")
+    RenovationType renovationType;
+    @ApiModelProperty(value = "描述")
+    String des;
+    @ApiModelProperty(value = "是否是收藏，true 是，false否")
+    boolean col;
+    @ApiModelProperty(value = "店名")
+    String storeName;
+    @ApiModelProperty(value = "维护人头像")
+    String maintainerIcon;
     @ApiModelProperty(value = "更新时间,时间戳")
     Long updateTime;
     @ApiModelProperty(value = "付款方式：付款方式：ONEFORTHREE 押一付三 ,ONEFORONE 押一付一,TWOFORTHREE 押二付三，HARFYEAR 半年付 ,ONEYEAR 年付," +
