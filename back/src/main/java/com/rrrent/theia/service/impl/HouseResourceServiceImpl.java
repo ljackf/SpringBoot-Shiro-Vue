@@ -64,7 +64,7 @@ public class HouseResourceServiceImpl implements HouseResourceService {
     }
 
     @Override
-    public List<HouseResourceVo> findListByUserId() {
+    public PageInfo<HouseResourceVo> findListByUserId() {
         return null;
     }
 }

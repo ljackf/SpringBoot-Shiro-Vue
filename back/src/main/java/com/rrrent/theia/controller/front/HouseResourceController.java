@@ -68,9 +68,9 @@ public class HouseResourceController {
     @ApiOperation(value = "房源收藏列表")
     @GetMapping(value = "/collect/list")
     public ResponseInfo<PageBean<HouseResourceVo>> collectList(PageBo pageBo){
-        List<HouseResourceVo> houseResourceVoPage = houseResourceService.findListByUserId();
+        PageInfo<HouseResourceVo> houseResourceVoPage = houseResourceService.findListByUserId(pageBo);
         PageBean<HouseResourceVo> pageBean = new PageBean(2,10,
-                10L,houseResourceVoPage);
+                10L,houseResourceVoPage.getList());
         return ResponseInfo.success(pageBean);
     }
 }

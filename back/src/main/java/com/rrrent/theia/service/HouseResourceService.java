@@ -19,5 +19,5 @@ public interface HouseResourceService {
 
     HouseResourceDetailVo findDetailById(Long id);
 
-    List<HouseResourceVo> findListByUserId();
+    PageInfo<HouseResourceVo> findListByUserId();
 }

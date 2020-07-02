@@ -176,7 +176,7 @@
     </update>
 
     <select id="getbyWxOpenId" resultType="com.alibaba.fastjson.JSONObject">
-        select * from sys_user where wechatlet_openid = #{openid}
+        select * from sys_user where wechatlet_openid = #{openId}
     </select>
 
     <update id="removeOldPermission">

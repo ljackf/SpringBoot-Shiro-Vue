@@ -21,11 +21,13 @@ public class AjaxPermissionsAuthorizationFilter extends FormAuthenticationFilter
 	@Override
 	protected boolean onAccessDenied(ServletRequest request, ServletResponse response) {
 		PrintWriter out = null;
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("code", ErrorEnum.E_20011.getErrorCode());
+		jsonObject.put("msg", ErrorEnum.E_20011.getErrorMsg());
 		HttpServletResponse res = (HttpServletResponse) response;
 		try {
 			res.setCharacterEncoding("UTF-8");
 			res.setContentType("application/json");
-			res.setStatus(401);
 			out = response.getWriter();
 		} catch (Exception e) {
 		} finally {

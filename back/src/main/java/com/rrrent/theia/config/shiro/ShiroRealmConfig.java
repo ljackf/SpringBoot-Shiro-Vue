@@ -81,20 +81,22 @@ public class ShiroRealmConfig {
              */
             @Override
             protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) {
-                String jwtToken = (String) token.getCredentials();
-//                String wxOpenId = jwtConfig.getWxOpenIdByToken(jwtToken);
-//                String sessionKey = jwtConfig.getSessionKeyByToken(jwtToken);
-                String wxOpenId = "hhhhhhhhhh";
-                String sessionKey = "ssssssssssss";
-                if (StringUtils.isEmpty(wxOpenId)) {
+                try{
+                    String jwtToken = (String) token.getCredentials();
+                    String wxOpenId = jwtConfig.getWxOpenIdByToken(jwtToken);
+                    String sessionKey = jwtConfig.getSessionKeyByToken(jwtToken);
+                    if (StringUtils.isEmpty(wxOpenId)) {
+                        throw new AuthenticationException("user account not exits , please check your token");
+                    }
+                    if (StringUtils.isEmpty(sessionKey)) {
+                        throw new AuthenticationException("sessionKey is invalid , please check your token");
+                    }
+                    if (!jwtConfig.verifyToken(jwtToken)) {
+                        throw new AuthenticationException("token is invalid , please check your token");
+                    }
+                }catch (Exception e){
                     throw new AuthenticationException("user account not exits , please check your token");
                 }
-                if (StringUtils.isEmpty(sessionKey)) {
-                    throw new AuthenticationException("sessionKey is invalid , please check your token");
-                }
-//                if (!jwtConfig.verifyToken(jwtToken)) {
-//                    throw new AuthenticationException("token is invalid , please check your token");
-//                }
                 return new SimpleAuthenticationInfo(token, token, getName());
             }
         };
