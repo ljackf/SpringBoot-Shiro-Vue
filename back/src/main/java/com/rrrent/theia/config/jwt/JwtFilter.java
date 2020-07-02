@@ -1,6 +1,7 @@
 package com.rrrent.theia.config.jwt;
 
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
+import org.apache.shiro.web.util.WebUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,7 +24,8 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
-        return !StringUtils.isEmpty(getAuthzHeader(request));
+        HttpServletRequest httpRequest = WebUtils.toHttp(request);
+        return !StringUtils.isEmpty(httpRequest.getHeader("L-TOKEN"));
     }
 
     /**
@@ -32,7 +34,8 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         if (isLoginAttempt(request, response)) {
-            JwtToken token = new JwtToken(getAuthzHeader(request));
+            HttpServletRequest httpRequest = WebUtils.toHttp(request);
+            JwtToken token = new JwtToken(httpRequest.getHeader("L-TOKEN"));
             getSubject(request, response).login(token);
         }
         return true;
