@@ -11,5 +11,5 @@ import java.util.List;
  * @Description:
  */
 public interface RegionStreetDao {
-    List<RegionVo> findByCode(@Param("code") Integer code);
+    List<RegionVo> findByCode(@Param("code") Long code);
 }

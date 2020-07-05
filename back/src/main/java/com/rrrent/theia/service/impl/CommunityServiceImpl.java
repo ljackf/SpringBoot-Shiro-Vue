@@ -1,5 +1,6 @@
 package com.rrrent.theia.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rrrent.theia.dao.CommunityDao;
 import com.rrrent.theia.service.CommunityService;
@@ -7,6 +8,8 @@ import com.rrrent.theia.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author : jack
@@ -21,13 +24,17 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public JSONObject listCommunity(JSONObject jsonObject) {
-
-        return CommonUtil.successPage(jsonObject, null, 0);
+        CommonUtil.fillPageParam(jsonObject);
+        List<JSONObject> jsonObjectList = communityDao.findAllByPage(jsonObject);
+        Integer c = communityDao.findAllCount();
+        return CommonUtil.successPage(jsonObject, jsonObjectList, c.intValue());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public JSONObject addCommunity(JSONObject requestJson) {
+        JSONArray jsonArray = requestJson.getJSONArray("selectedOptions");
+        requestJson.put("region",jsonArray.get(2).toString());
         communityDao.addCommunity(requestJson);
         return CommonUtil.successJson();
     }
@@ -35,5 +42,10 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     public JSONObject updateCommunity(JSONObject requestJson) {
         return null;
+    }
+
+    @Override
+    public JSONObject listAllCommunity() {
+        return CommonUtil.successJson(communityDao.listAllCommunity());
     }
 }

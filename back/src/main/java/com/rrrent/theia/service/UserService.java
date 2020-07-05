@@ -2,6 +2,8 @@ package com.rrrent.theia.service;
 
 import com.alibaba.fastjson.JSONObject;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author: jack
  * @description: 用户/角色/权限
@@ -55,4 +57,6 @@ public interface UserService {
 	JSONObject deleteRole(JSONObject jsonObject);
 
     JSONObject getbyWxOpenId(String openid);
+
+    JSONObject getJsonByToken(HttpServletRequest request);
 }

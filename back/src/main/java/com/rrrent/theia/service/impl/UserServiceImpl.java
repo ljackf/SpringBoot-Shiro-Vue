@@ -1,6 +1,7 @@
 package com.rrrent.theia.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.rrrent.theia.config.jwt.JwtConfig;
 import com.rrrent.theia.dao.UserDao;
 import com.rrrent.theia.service.UserService;
 import com.rrrent.theia.util.CommonUtil;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,6 +25,8 @@ import java.util.Set;
 public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserDao userDao;
+	@Autowired
+	private JwtConfig jwtConfig;
 
 	/**
 	 * 用户列表
@@ -177,5 +181,15 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public JSONObject getbyWxOpenId(String openid) {
 		return userDao.getbyWxOpenId(openid);
+	}
+
+	@Override
+	public JSONObject getJsonByToken(HttpServletRequest request) {
+		String token = request.getHeader("L-TOKEN");
+		if(token ==null){
+			return null;
+		}
+		String openid = jwtConfig.getWxOpenIdByToken(token);
+		return getbyWxOpenId(openid);
 	}
 }

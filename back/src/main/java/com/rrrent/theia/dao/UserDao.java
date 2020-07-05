@@ -92,4 +92,8 @@ public interface UserDao {
 	int removeRoleAllPermission(JSONObject jsonObject);
 
 	JSONObject getbyWxOpenId(@Param("openId") String openid);
+
+    void putCache(@Param("k") String s, @Param("v")String token);
+
+	String getCache(@Param("k")String s);
 }

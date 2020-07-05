@@ -32,6 +32,14 @@ public class CommunityController {
 	}
 
 	/**
+	 * 查询所有房源
+	 */
+	@GetMapping("/all")
+	public JSONObject all(HttpServletRequest request) {
+		return communityService.listAllCommunity();
+	}
+
+	/**
 	 * 新增社区
 	 */
 	@RequiresPermissions("community:add")

@@ -3,11 +3,14 @@
     <div class="filter-container">
       <el-form>
         <el-form-item>
+
           <el-button type="primary" icon="plus" @click="showCreate" v-if="hasPerm('community:add')">添加
           </el-button>
+
         </el-form-item>
       </el-form>
     </div>
+
     <el-table :data="list" v-loading.body="listLoading" element-loading-text="拼命加载中" border fit
               highlight-current-row>
       <el-table-column align="center" label="序号" width="80">
@@ -15,12 +18,13 @@
           <span v-text="getIndex(scope.$index)"> </span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="content" label="房源" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" label="创建时间" width="170">
+      <el-table-column align="center" prop="name" label="社区名称" style="width: 60px;"></el-table-column>
+      <el-table-column align="center"  label="地址" style="width: 60px;">
         <template slot-scope="scope">
-          <span>{{scope.row.createTime}}</span>
+          <span v-text="getpcd(list[scope.$index].region) + list[scope.$index].address" > </span>
         </template>
       </el-table-column>
+      <el-table-column align="center" label="创建时间" prop="createTime" width="170"></el-table-column>
       <el-table-column align="center" label="管理" width="200" v-if="hasPerm('community:update')">
         <template slot-scope="scope">
           <el-button type="primary" icon="edit" @click="showUpdate(scope.$index)">修改</el-button>
@@ -37,22 +41,16 @@
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form class="small-space" :model="tempCommunity" label-position="left" label-width="100px"
-               style='width: 300px; margin-left:50px;'>
+      <el-form class="small-space" :model="tempCommunity" label-position="left" label-width="200px"
+               style='width: 500px; margin-left:50px;'>
         <el-form-item label="社区名称" required>
           <el-input type="text" v-model="tempCommunity.name">
-          </el-input>
-        </el-form-item>
-        <el-form-item label="社区地址">
-          <el-input type="text" v-model="tempCommunity.address">
           </el-input>
         </el-form-item>
         <el-form-item label="建筑年代">
           <el-select v-model="tempCommunity.architectureAge" placeholder="请选择">
             <el-option
-              v-for="item in ages"
-              :label="item.name"
-              :value="item.value">
+              v-for="item in ages" :key="item.value" :label="item.name" :value="item.value">
             </el-option>
           </el-select>
         </el-form-item>
@@ -60,6 +58,7 @@
           <el-select v-model="tempCommunity.architectureType" placeholder="请选择">
             <el-option
               v-for="item in architectureTypes"
+              :key="item.value"
               :label="item.name"
               :value="item.value">
             </el-option>
@@ -97,17 +96,17 @@
             @change="handleChange">
           </el-cascader>
         </el-form-item>
-        <el-input v-model="tempCommunity.address" autocomplete="off" id="suggestId" name="address_detail">请输入详细街道地址</el-input>
-        <div class="getAddress" @click="getAddressInfo()">获取位置信息</div>
-        <el-form-item label="获取定位">
-          <div>
-            <div id="allmap"></div>
-            <div>
-              经度<el-input  v-model="tempCommunity.longitude" disabled></el-input>
-              纬度<el-input  v-model="tempCommunity.latitude" disabled></el-input>
-            </div>
-          </div>
+        <el-form-item label="请输入详细街道地址">
+          <el-input type="text" v-model="tempCommunity.addressDetail" @keyup.enter.native="getAddressInfo()">
+          </el-input>
         </el-form-item>
+        <div>
+          <div id="allmap" style="width:500px;height:400px;"></div>
+          <div>
+            经度<el-input  v-model="tempCommunity.longitude" disabled></el-input>
+            纬度<el-input  v-model="tempCommunity.latitude" disabled></el-input>
+          </div>
+        </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -122,7 +121,9 @@
   import {provinceAndCityData,regionData,provinceAndCityDataPlus,regionDataPlus,CodeToText,TextToCode} from 'element-china-area-data'
   export default {
     mounted() {
-      this.tencentMap()//调用腾讯地图
+      this.$nextTick(() => {
+        this.tencentMap()//调用腾讯地图
+      });
     },
     data() {
       return {
@@ -155,6 +156,7 @@
           id: "",
           name: "",
           address: "",
+          addressDetail: "",
           architectureAge: "",
           architectureType: "",
           architectureSum: "",
@@ -209,12 +211,34 @@
         //显示新增对话框
         this.dialogStatus = "create"
         this.dialogFormVisible = true
+        this.$nextTick(() => {
+          this.tencentMap()
+        })
       },
       showUpdate($index) {
         //显示修改对话框
-        this.tempCommunity.id = this.list[$index].id;
+        let dbConmunity = this.list[$index];
+        this.tempCommunity.name = dbConmunity.name;
+        this.tempCommunity.addressDetail = dbConmunity.address;
+        this.tempCommunity.architectureAge = dbConmunity.architecture_age;
+        this.tempCommunity.architectureType = dbConmunity.architecture_type;
+        this.tempCommunity.architectureSum = dbConmunity.architecture_sum;
+        this.tempCommunity.serviceCompany = dbConmunity.service_company;
+        this.tempCommunity.developCompany = dbConmunity.develop_company;
+        this.tempCommunity.serviceFee = dbConmunity.service_fee;
+        this.tempCommunity.houseSum = dbConmunity.house_sum;
+        this.tempCommunity.secondHandPrice = dbConmunity.second_hand_price;
+        this.tempCommunity.longitude = dbConmunity.longitude;
+        this.tempCommunity.latitude = dbConmunity.latitude;
+        this.tempCommunity.selectedOptions =
+          [parseInt(dbConmunity.region/10000)*10000,parseInt(dbConmunity.region/100)*100,dbConmunity.region]
+        this.address=this.getCityCode(this.tempCommunity.selectedOptions);
+        this.tempCommunity.id = dbConmunity.id;
         this.dialogStatus = "update"
         this.dialogFormVisible = true
+        this.$nextTick(() => {
+          this.tencentMap()//调用腾讯地图
+        });
       },
       createCommunity() {
         //保存新房源
@@ -238,7 +262,7 @@
           this.dialogFormVisible = false
         })
       },
-      tencentMap: function () {
+      tencentMap() {
         var center = new qq.maps.LatLng(this.longitude, this.latitude);
         var map = new qq.maps.Map(
           document.getElementById('allmap'), {
@@ -246,29 +270,62 @@
             zoom: 13,
             draggable: true,
             scrollwheel: true,
-            disableDoubleClickZoom: false
+            disableDoubleClickZoom: true
           })
-        //创建一个Marker
         var marker = new qq.maps.Marker({
         //设置Marker的位置坐标
           position: center,
-        //设置显示Marker的地图
           map: map
         });
+        var infoWin = new qq.maps.InfoWindow({
+          map: map
+        });
+        let address1=''
+        var geocoder = new qq.maps.Geocoder({
+          complete: function(res) {
+            console.log(res);
+            address1 = res.detail.nearPois[0].name;
+          }
+        });
+        // qq.maps.event.addListener(map, "click", function(event) {
+        //   this.longitude = event.latLng.getLat();
+        //   this.latitude = event.latLng.getLng();
+        //   console.log(event);
+        //   let lat = new qq.maps.LatLng(this.longitude, this.latitude);
+        //   geocoder.getAddress(lat);
+        //   setTimeout(() => {
+        //     infoWin.open();
+        //     infoWin.setContent(
+        //       '<div style="text-align:center;white-space:nowrap;">' +
+        //       address1 +
+        //       "</div>"
+        //     );
+        //     infoWin.setPosition(event.latLng);
+        //   }, 200);
+        // });
       },
       getAddressInfo(){
         this.api({
           method:'get',
-          url:'https://bird.ioliu.cn/v1/?url=' +"https://apis.map.qq.com/ws/geocoder/v1/?address="+this.selectedOptions+this.address+"&key=6NSBZ-I7LKU-ZJ7VV-4BA2C-C3VE5-ASBGZ",
+          url:'https://bird.ioliu.cn/v1/?url=' +"https://apis.map.qq.com/ws/geocoder/v1/?address="+this.address+this.tempCommunity.addressDetail+"&key=6NSBZ-I7LKU-ZJ7VV-4BA2C-C3VE5-ASBGZ",
           dataType:'JSONP',
         }).then((res)=>{
-          if(res.data.status==0){
-            this.longitude=res.data.result.location.lat;
-            this.latitude=res.data.result.location.lng;
+          if(res.status==0){
+            this.tempCommunity.longitude=res.result.location.lat;
+            this.tempCommunity.latitude=res.result.location.lng;
             this.tencentMap();//更新地图信息
           }else{
-            this.longitude=0;
-            this.latitude=0;
+            this.tempCommunity.longitude=0;
+            this.tempCommunity.latitude=0;
+          }
+        }).catch(res => {
+          if(res.status==0){
+            this.tempCommunity.longitude=res.result.location.lat;
+            this.tempCommunity.latitude=res.result.location.lng;
+            this.tencentMap();//更新地图信息
+          }else{
+            this.tempCommunity.longitude=0;
+            this.tempCommunity.latitude=0;
           }
         })
         return false;
@@ -279,7 +336,10 @@
       getCityCode:function(value){
         return CodeToText[value[0]]+CodeToText[value[1]]+CodeToText[value[2]]
       },
-    },
+      getpcd:function(value){
+        return CodeToText[value/10000*10000]+CodeToText[value/100*100]+CodeToText[value]
+      }
+    }
 
   }
 </script>

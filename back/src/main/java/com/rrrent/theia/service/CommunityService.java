@@ -13,4 +13,6 @@ public interface CommunityService {
     JSONObject addCommunity(JSONObject requestJson);
 
     JSONObject updateCommunity(JSONObject requestJson);
+
+    JSONObject listAllCommunity();
 }

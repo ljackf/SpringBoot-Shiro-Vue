@@ -9,6 +9,14 @@
          from house_resource hr
     </select>
 
+    <select id="findListPageByUserId" resultType="com.rrrent.theia.vo.HouseResourceVo">
+        select hr.area,hr.bathroom,hr.house_layout,hr.name,hr.pay_mode payMode,hr.settings,hr.floor_type floorType,
+         hr.house_layout houseLayout,hr.hall,hr.pre_img preImg,hr.room,hr.rent,hr.id
+         from house_resource hr left join col_house ch on ch.house_id=hr.id where ch.user_id = #{userId}
+    </select>
+
+
+
     <select id="findById" resultType="com.rrrent.theia.dto.HouseResourceDetailDto">
         select hr.id id, hr.name name, hr.house_layout houseLayout,su.mobile maintainerMobile,su.icon maintainerIcon,su.nickname
         maintainer,s.name storeName,hr.floor_type floorType,
@@ -33,4 +41,44 @@
         select t.name,t.value from tag_house_relation thr left join tags t on t.id = thr.tag_id where thr.house_id =
         #{id} and t.type="GENERAL"
     </select>
+
+    <select id="findAllTags" resultType="com.rrrent.theia.vo.TagVo">
+        select t.name,t.value from tags t
+    </select>
+
+    <insert id="collect" parameterType="java.util.Map">
+        INSERT INTO col_house
+            (user_id, house_id)
+        VALUES
+            (#{userId},#{id})
+    </insert>
+
+    <delete id="cancelCollect" parameterType="java.util.Map">
+        delete from col_house
+         where
+            user_id = #{userId} and house_id = #{id}
+    </delete>
+
+    <select id="countHouseResource" resultType="Integer">
+        SELECT count(0)
+        FROM house_resource w
+    </select>
+
+    <select id="listHouseResource" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.name ,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM house_resource w
+        ORDER BY w.id DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <insert id="addHouseResource" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO `rrrent`.`house_resource` (`area`, `bathroom`, `floor`, `room`, `hall`, `pre_img`, `orientation`, `renovation_type`, `des`,
+         `house_img`, `house_layout`, `name`, `selected`, `maintainer`, `settings`, `pay_mode`, `floor_type`, `rent`, `community_id`) VALUES
+        (#{area}, #{bathroom}, #{floor}, #{room},#{hall},#{preImg1},#{orientation}, #{renovationType}, #{des},
+        #{houseImgs},#{houseLayout},#{name},#{selected}, #{maintainer}, #{settings},
+        #{payMode},#{floortype},#{rent},#{community_id});
+    </insert>
 </mapper>

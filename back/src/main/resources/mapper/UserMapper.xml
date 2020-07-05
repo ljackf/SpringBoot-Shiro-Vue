@@ -202,4 +202,11 @@
          WHERE mobile=#{mobile}
          AND delete_status='1';
     </select>
+
+    <insert id="putCache">
+        insert INTO cache (k,v) values  (#{k},#{v})
+    </insert>
+    <select id="getCache" parameterType="java.util.Map" resultType="java.lang.String">
+        select v from cache where k = #{k}
+    </select>
 </mapper>

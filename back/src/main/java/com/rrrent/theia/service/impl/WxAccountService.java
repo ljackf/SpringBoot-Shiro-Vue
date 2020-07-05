@@ -83,9 +83,9 @@ public class WxAccountService implements WxAppletService {
             JSONObject wxAccount = userService.getbyWxOpenId(response.getOpenid());
             if (wxAccount == null) {
                 wxAccount = new JSONObject();
-                wxAccount.put("openId",response.getOpenid());    //不存在就新建用户
             }
-            //4 . 更新sessionKey和 登陆时间
+            wxAccount.put("wechatlet_openid",response.getOpenid());    //不存在就新建用户
+        //4 . 更新sessionKey和 登陆时间
             wxAccount.put("sessionKey",response.getSession_key());
             userService.addUser(wxAccount);
             //5 . JWT 返回自定义登陆态 Token

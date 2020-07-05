@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
  * @date: 2020/06/18
  */
 @RestController
-@RequestMapping("/article")
+@RequestMapping("/house")
 public class ArticleController {
 
 	@Autowired

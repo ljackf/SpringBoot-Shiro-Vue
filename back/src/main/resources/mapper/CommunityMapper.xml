@@ -5,11 +5,27 @@
 
     <insert id="addCommunity" parameterType="com.alibaba.fastjson.JSONObject">
         INSERT INTO `community`
-        (`name`, `architecture_age`, `architecture_type`, `architecture_sum`, `house_sum`, `service_company`, `service_fee`, `develop_company`, `address`, `second_hand_price`)
+        (`name`, `architecture_age`, `architecture_type`, `architecture_sum`, `house_sum`, `service_company`,
+        `service_fee`, `develop_company`, `address`, `second_hand_price`,latitude,longitude,region)
         VALUES
-        (#{name}, #{architectureAge}, #{architectureType}, #{architectureSum}, #{houseSum}, #{serviceCompany}, #{serviceFee}, #{developCompany}, #{address}, #{secondHandPrice});
+        (#{name}, #{architectureAge}, #{architectureType}, #{architectureSum}, #{houseSum}, #{serviceCompany},
+        #{serviceFee}, #{developCompany}, #{addressDetail}, #{secondHandPrice},#{latitude},#{longitude},#{region});
     </insert>
 
+    <select id="findAllByPage" parameterType="com.alibaba.fastjson.JSONObject"
+            resultType="com.alibaba.fastjson.JSONObject">
+        select id,
+        name,`architecture_age`, `architecture_type`, `architecture_sum`, `house_sum`, `service_company`,
+        `service_fee`, `develop_company`, `address`, `second_hand_price`,latitude,longitude,region,
+        DATE_FORMAT(create_time, '%Y.%m.%d %T') createTime from community  ORDER BY id DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
 
+    <select id="findAllCount" resultType="Integer">
+         select count(1) from community
+    </select>
 
+    <select id="listAllCommunity" resultType="com.alibaba.fastjson.JSONObject">
+         select id, name from community
+    </select>
 </mapper>

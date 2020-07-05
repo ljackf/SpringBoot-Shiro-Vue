@@ -29,7 +29,7 @@ public class RegionServiceImpl implements RegionService {
     public List<RegionVo> provinceCityAll() {
         List<RegionVo>regionVos = regionDao.provinceCityAll();
         List<RegionVo>provinces = new ArrayList<>();
-        Map<Integer,List<RegionVo>> regionVoHashMap= new HashMap<>();
+        Map<Long,List<RegionVo>> regionVoHashMap= new HashMap<>();
         regionVos.forEach(regionVo -> {
             if(regionVo.getCode()%10000==0){
                 provinces.add(regionVo);
@@ -51,10 +51,10 @@ public class RegionServiceImpl implements RegionService {
     }
 
     @Override
-    public List<RegionVo> regionStreetAll(Integer regionCode) {
-        List<RegionVo>regionVos = regionDao.regionStreetAll(regionCode);
+    public List<RegionVo> regionStreetAll(Integer cityCode) {
+        List<RegionVo>regionVos = regionDao.regionStreetAll(cityCode);
         regionVos.forEach(regionVo -> {
-            Integer code = regionVo.getCode();
+            Long code = regionVo.getCode();
             List<RegionVo>children = regionStreetDao.findByCode(code);
             regionVo.setChildren(children);
         });

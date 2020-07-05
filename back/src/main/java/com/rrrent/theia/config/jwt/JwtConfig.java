@@ -4,20 +4,22 @@ import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.rrrent.theia.bo.WxAccount;
+import com.rrrent.theia.dao.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by EalenXie on 2018/11/22 17:16.
  */
 @Component
 public class JwtConfig {
+
+    @Autowired
+    private UserDao userDao;
 
     /**
      * JWT 自定义密钥 我这里写死的
@@ -29,7 +31,6 @@ public class JwtConfig {
      */
     private static final long EXPIRE_TIME = 7200;
 
-    public static ConcurrentHashMap<String,String> cache = new ConcurrentHashMap<>();
     /**
      * 根据微信用户登陆信息创建 token
      * 注 : 这里的token会被缓存到redis中,用作为二次验证
@@ -43,13 +44,13 @@ public class JwtConfig {
         //1 . 加密算法进行签名得到token
         Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
         String token = JWT.create()
-                .withClaim("wxOpenId", String.valueOf(wxAccount.get("openId")))
+                .withClaim("wxOpenId", String.valueOf(wxAccount.get("wechatlet_openid")))
                 .withClaim("sessionKey", String.valueOf(wxAccount.get("sessionKey")))
                 .withClaim("jwt-id", jwtId)
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRE_TIME * 1000))  //JWT 配置过期时间的正确姿势
                 .sign(algorithm);
         //2 . Redis缓存JWT, 注 : 请和JWT过期时间一致
-        cache.put("JWT-SESSION-" + jwtId, token);
+        userDao.putCache("JWT-SESSION-" + jwtId, token);
         return token;
     }
 
@@ -64,7 +65,7 @@ public class JwtConfig {
     public boolean verifyToken(String token) {
         try {
             //1 . 根据token解密，解密出jwt-id , 先从redis中查找出redisToken，匹配是否相同
-            String redisToken = cache.get("JWT-SESSION-" + getJwtIdByToken(token));
+            String redisToken = userDao.getCache("JWT-SESSION-" + getJwtIdByToken(token));
             if (!redisToken.equals(token)) return false;
             //2 . 得到算法相同的JWTVerifier
             Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
@@ -76,8 +77,8 @@ public class JwtConfig {
                     .build();
             //3 . 验证token
             verifier.verify(redisToken);
-            //4 . Redis缓存JWT续期
-            cache.put("JWT-SESSION-" + getJwtIdByToken(token), redisToken);
+            //4 . Redis缓存JWT续期 不存在续期 现在不过期
+//            userDao.putCache("JWT-SESSION-" + getJwtIdByToken(token), redisToken);
             return true;
         } catch (Exception e) { //捕捉到任何异常都视为校验失败
             return false;

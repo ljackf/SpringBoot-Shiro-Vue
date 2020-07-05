@@ -19,12 +19,18 @@ import java.util.List;
 @Setter
 @ApiModel(value = "房源列表参数")
 public class HouseResourceBo {
+    @ApiModelProperty(value = "关键字搜索")
+    String keyword;
+    @ApiModelProperty(value = "排序方式:PRICEDESC：价格倒序,PRICEASC：价格正序,CREATEDESC:最新发布")
+    String orderMode;
     @ApiModelProperty(value = "城市code",required = true)
     String code;
     @ApiModelProperty("是否是优选好房")
     Boolean selected;
     @ApiModelProperty("租金段：LESS800 少于800,F800T1500 800-1500,F1500T2000 1500-2000,F2000T4000 2000-4000,F4000T5000 4000-5000,F5000T8000 5000-8000,MORE8000 8000以上")
     RentSeg rentSeg;
+    @ApiModelProperty(value = "户型：COTENANCY 合租 ,WHOLERENT 整租，SHOPOFFICE 商铺办公")
+    HouseLayout houseLayout;
     @ApiModelProperty("租金大于多少")
     BigDecimal rentStart;
     @ApiModelProperty("租金小于多少")

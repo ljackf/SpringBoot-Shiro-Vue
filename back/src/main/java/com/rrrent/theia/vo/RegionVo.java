@@ -16,6 +16,6 @@ import java.util.List;
 @ApiModel(value = "省份城市")
 public class RegionVo {
     private String name;
-    private Integer code;
+    private Long code;
     List<RegionVo> children;
 }
